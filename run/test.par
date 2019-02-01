@@ -1,0 +1,53 @@
+# simulation parameters 
+# date: 20160630 version: 1.1.0 update: ordering
+
+# simulator settings
+dt[s]: 0.01
+iteration: 1000
+save Trace: True
+save Cycle: 10
+save Step: True
+save Count: True
+debug: True
+
+# cell properties
+cell Length[um]: 6
+cell Radius[um]: 1
+temperature[K]: 300.0
+species Number: 2
+
+# walker properties
+walker Number: 1
+walker Viscosity[Pa s]: 0.001
+walker Alpha: 2.0
+walker Radius[nm]: 100
+walker Initial Position[fixed, random, file]: fixed
+walker Fixed Position: (0.0, 0.0, 0.0)
+
+# enzyme properties
+enzyme Number: 10000
+enzyme Concentration[uM]: 1.0
+enzyme Focus Ratio: 0.0
+enzyme Surface Type[ring, disk, sur, vol]: vol
+enzyme Initial Position[fixed, random, file]: random
+enzyme Radius[nm]: 5
+enzyme Viscosity[Pa s]: 0.001
+enzyme Alpha: 2.0
+
+# reaction 
+reaction On: True
+sight Distance[nm]: 5
+sight Velocity[um/s]: 1.0
+Kcat[1/s]: 8.9
+Km[uM]: 6.3
+
+# substrate properties
+substrate Number: 0
+substrate Concentration[uM]: 0.25
+substrate Surface Type[ring, disk, sur, vol]: vol
+substrate Band Position: 0.0
+substrate Band Width: 0.1
+substrate Ring Depth: 0.25
+substrate Initial Position[fixed, random, file]: random
+substrate Radius[nm]: 0.0
+substrate Viscosity[Pa s]: 0.0

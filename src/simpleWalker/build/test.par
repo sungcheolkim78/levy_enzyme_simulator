@@ -1,0 +1,44 @@
+# Simulator
+
+dt: 0.1
+iteration: 100
+species Number: 2
+save Trace: True
+save Cycle: 1
+save Step: True
+save Count: True
+show Progress: True
+debug: True
+
+# Walker1
+
+Walker1 Surface Type: vol
+Walker1 Sphere Radius[um]: 10.0
+Walker1 Box Dimensions: (10.0, 20.0, 10.0)
+Walker1 Cell Length: 4
+Walker1 Cell Radius: 1
+
+Walker1 Particle Number: 1000
+Walker1 Injection Method: random
+Walker1 Initial Position: (0, 0, 0)
+Walker1 Radius[nm]: 1.0
+Walker1 Diffusion Constant[um2/s]: 1.0
+Walker1 Alpha: 2.0
+
+# Walker2
+
+Walker2 Surface Type: ring
+Walker2 Sphere Radius[um]: 10.0
+Walker2 Box Dimensions: (10.0, 20.0, 10.0)
+Walker2 Cell Length: 4
+Walker2 Cell Radius: 1
+Walker2 Band Width: 0.1
+Walker2 Band Position: 0.0
+Walker2 Ring Depth: 0.1
+
+Walker2 Particle Number: 100
+Walker2 Injection Method: random
+Walker2 Initial Position: (0, 0, 0)
+Walker2 Radius[nm]: 1.0
+Walker2 Diffusion Constant[um2/s]: 2
+Walker2 Alpha: 2.0
