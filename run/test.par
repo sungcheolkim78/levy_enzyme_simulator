@@ -1,53 +1,80 @@
-# simulation parameters 
-# date: 20160630 version: 1.1.0 update: ordering
+# Simulator
 
-# simulator settings
-dt[s]: 0.01
-iteration: 1000
-save Trace: True
-save Cycle: 10
-save Step: True
-save Count: True
-debug: True
-
-# cell properties
-cell Length[um]: 6
-cell Radius[um]: 1
-temperature[K]: 300.0
+dt: 0.0007
+iteration: 2000
 species Number: 2
+save Trace: True
+save Cycle: 5
+info Cycle: 100
+save Step: False
+save Count: True
+show Progress: True
+debug: True
+species Name: (Enzyme, Substrate)
 
-# walker properties
-walker Number: 1
-walker Viscosity[Pa s]: 0.001
-walker Alpha: 2.0
-walker Radius[nm]: 100
-walker Initial Position[fixed, random, file]: fixed
-walker Fixed Position: (0.0, 0.0, 0.0)
+# Enzyme
 
-# enzyme properties
-enzyme Number: 10000
-enzyme Concentration[uM]: 1.0
-enzyme Focus Ratio: 0.0
-enzyme Surface Type[ring, disk, sur, vol]: vol
-enzyme Initial Position[fixed, random, file]: random
-enzyme Radius[nm]: 5
-enzyme Viscosity[Pa s]: 0.001
-enzyme Alpha: 2.0
+Enzyme Surface Shape: Cell
+Enzyme Surface Type: vol
+#Enzyme Box Dimensions: (1, 2, 3)
+Enzyme Cell Length: 6
+Enzyme Cell Radius: 1
+#Enzyme Sphere Radius: 1
+Enzyme Band Position: 0.0
+Enzyme Band Width: 0.2
+Enzyme Ring Depth: 0.1
 
-# reaction 
-reaction On: True
-sight Distance[nm]: 5
-sight Velocity[um/s]: 1.0
-Kcat[1/s]: 8.9
-Km[uM]: 6.3
+Enzyme Walker Type: Enzyme
+Enzyme Concentration: 0.25
+#Enzyme Particle Number: 1
+#Enzyme Diffusion Constant: 1.0
+Enzyme Particle Radius[nm]: 2.5
+Enzyme Particle Density[g/cm3]: 1.0
+Enzyme Temperature: 300
+Enzyme Viscosity: 0.001
+Enzyme Alpha: 2.0
 
-# substrate properties
-substrate Number: 0
-substrate Concentration[uM]: 0.25
-substrate Surface Type[ring, disk, sur, vol]: vol
-substrate Band Position: 0.0
-substrate Band Width: 0.1
-substrate Ring Depth: 0.25
-substrate Initial Position[fixed, random, file]: random
-substrate Radius[nm]: 0.0
-substrate Viscosity[Pa s]: 0.0
+Enzyme Injection Method: vol
+#Enzyme Initial Position: (0.2, 0.2, 0.2)
+
+Enzyme Substrate On: True
+Enzyme Substrate Constant: True
+Enzyme Substrate Name: Substrate
+Enzyme Sight Distance[nm]: 7.5
+Enzyme Reaction On: True
+Enzyme Focus Concentration[uM]: 0.0
+Enzyme Write Count: True
+Enzyme Km: 8.9
+Enzyme Kcat: 6.3
+
+Enzyme Debug: False
+
+# Substrate
+
+Substrate Surface Shape: Cell
+Substrate Surface Type: vol
+#Substrate Box Dimensions: (1, 2, 3)
+Substrate Cell Length: 6
+Substrate Cell Radius: 1
+#Substrate Sphere Radius: 1
+Substrate Ring Depth: 0.1
+Substrate Band Position: 0.0
+Substrate Band Width: 0.2
+
+Substrate Walker Type: Base
+Substrate Concentration[uM]: 0.25
+#Substrate Particle Number: 100
+Substrate Particle Density[g/cm3]: 1.0
+Substrate Particle Radius[nm]: 5.0
+Substrate Particle Density[g/cm3]: 1.0
+#Substrate Diffusion Constant: 0.0
+Substrate Temperature: 300
+Substrate Viscosity: 0.001
+Substrate Alpha: 2.0
+
+Substrate Injection Method: Random
+#Substrate Initial Position: (-0.2, -0.2, -0.2)
+
+Substrate Substrate On: False
+
+Substrate Debug: False
