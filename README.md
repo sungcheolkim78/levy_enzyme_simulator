@@ -16,7 +16,7 @@ prepare simulation parameter file (sim.par or test.par)
 
 ### test.par
 
-'''
+```
 # Simulator
 
 dt: 0.0007
@@ -97,7 +97,7 @@ Substrate Injection Method: Random
 Substrate Substrate On: False
 
 Substrate Debug: False
-'''
+```
 
 ## Visualization
 
