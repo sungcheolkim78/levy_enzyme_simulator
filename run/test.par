@@ -1,7 +1,7 @@
 # Simulator
 
-dt: 0.0007
-iteration: 2000
+dt: 0.001
+iteration: 1000
 species Number: 2
 save Trace: True
 save Cycle: 5
@@ -9,20 +9,20 @@ info Cycle: 100
 save Step: False
 save Count: True
 show Progress: True
-debug: True
+debug: False
 species Name: (Enzyme, Substrate)
 
 # Enzyme
 
 Enzyme Surface Shape: Cell
 Enzyme Surface Type: vol
-#Enzyme Box Dimensions: (1, 2, 3)
 Enzyme Cell Length: 6
 Enzyme Cell Radius: 1
+#Enzyme Box Dimensions: (1, 2, 3)
 #Enzyme Sphere Radius: 1
-Enzyme Band Position: 0.0
-Enzyme Band Width: 0.2
-Enzyme Ring Depth: 0.1
+#Enzyme Band Position: 0.0
+#Enzyme Band Width: 0.2
+#Enzyme Ring Depth: 0.1
 
 Enzyme Walker Type: Enzyme
 Enzyme Concentration: 0.25
