@@ -3,12 +3,14 @@ Enzyme simulator based on random walker with Levy distribution
 
 ## Install & Compile
 
+```
 > cd src/enzymeWalker
 > mkdir build
 > cd build
 > cmake ..
 > make -j4
 > make install
+```
 
 ## Usage
 
