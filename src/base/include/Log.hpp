@@ -17,7 +17,7 @@ class Log {
 public:
   // member functions
   void newfile(string fn);
-  void timestamp(string parname, string comment);
+  void timestamp(string comment);
   void write(string line);
 
   // Constructor
@@ -26,52 +26,56 @@ public:
     if (f.good()) {
       cout << "... print time stamp" << endl;
       file_.open(filename.c_str(), ios::out|ios::app);
-      timestamp(parname, "[Start]");
     }
     else {
       cout << "... create new " << filename << endl;
       newfile(filename);
-      timestamp(parname, "[Start]");
     }
     f.close();
   }
   Log() { Log("cloud_log.txt", "test.par"); }
 
   virtual ~Log() {
-    timestamp("", "[End]");
+    timestamp("[End]");
     file_.close();
   }
 
 private:
   string filename_;
   fstream file_;
-
+  
 };
 
-void Log::timestamp(string parname, string comment) {
+void Log::timestamp(string comment) {
   using namespace date;
   using namespace std::chrono;
 
-  auto l = (parname+comment).size();
-  file_ << "#[" << system_clock::now() << "] " << string(50-l,'#') << " " << parname << " " << comment << endl;
+  auto l = comment.size();
+  file_ << "# [" << system_clock::now() << "] " << comment << " " << string(58-l, '-') << endl;
+  file_ << '#' << string(89,'-') << endl;
 }
 
 void Log::newfile(string fn) {
   cout << "... prepare new cloud_log.txt" << endl;
   file_.open(fn.c_str(), ios::out|ios::app);
-  file_ << string(80,'#') << endl
+  file_ << '#' << string(89,'-') << endl
         << "# Enzyme simulation log" << endl
-        << string(80,'#') << endl
+        << '#' << string(89,'-') << endl
+        << "# Column Information: " << endl
         << "# 1 - Time" << endl
-        << "# 2 - Total Product" << endl
-        << "# 3 - Total Product Concentration [uM]" << endl
-        << "# 4 - Total Product Rate [uM/s]" << endl
-        << "# 6 - Wall Hit " << endl
-        << "# 7 - Wall Hit Pressure [mbar]" << endl
-        << "# 8 - Mean Free time [s]" << endl
-        << "# 9 - Mean Free Length [um]" << endl
-        << "# 10 - Count for measuring mean free time " << endl
-        << string(80,'#') << endl;
+        << "# 2 - Cluster concentration [uM]" << endl
+        << "# 3 - Cluster radius [nm]" << endl
+        << "# 4 - Substrate concentration [uM]" << endl
+        << "# 5 - Total Product" << endl
+        << "# 6 - Total Product Concentration [uM]" << endl
+        << "# 7 - Total Product Rate [uM/s]" << endl
+        << "# 8 - Wall Hit " << endl
+        << "# 9 - Wall Hit Pressure [mbar]" << endl
+        << "# 10 - Mean Free time [s]" << endl
+        << "# 11 - Mean Free Length [um]" << endl
+        << "# 12 - Count for measuring mean free time " << endl
+        << "# 13 - Simulation ID" << endl
+        << "#" << string(89,'-') << endl;
 }
 
 void Log::write(string log_str) {

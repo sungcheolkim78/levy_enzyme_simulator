@@ -112,14 +112,8 @@ void Simulator::run() {
   ProgressBar *bar = new ProgressBar(iteration_);
   size_t infoItr;
   string msg = "";
-  if (cloudList_.size() == 2)
-    msg = "# dt: " + to_string(dt_) + " iteration: " + to_string(iteration_) +
-          " [E]: " + to_string(cloudList_[0]->concentration()) +
-          " [S]: " + to_string(cloudList_[1]->concentration());
-  else if (cloudList_.size() == 1)
-    msg = "# dt: " + to_string(dt_) + " iteration: " + to_string(iteration_) +
-          " [E]: " + to_string(cloudList_[0]->concentration());
-  log_->write(msg);
+  msg = "dt: " + to_string(dt_) + " iteration: " + to_string(iteration_) + " [Start]";
+  log_->timestamp(msg);
 
   for (infoItr=0; infoItr<iteration_; infoItr++) {
       evolveClouds();

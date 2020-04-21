@@ -33,6 +33,7 @@ public:
   virtual void info(Log* log_) = 0;
   virtual void setSubstrateCloud(Cloud* sc) = 0;
   virtual double concentration() = 0;
+  virtual double cellConcentration() = 0;
 
   // member functions
   void addWalker(Walker* w);
@@ -53,6 +54,8 @@ public:
   void cloudID(string cID) { cloudID_ = cID; }
   string savefilename() { return savefilename_; }
   void savefilename(string fname) { savefilename_ = fname; }
+  string infoString() { return infoString_; }
+  void infoString(string s) { infoString_ = s; }
   gsl_rng* rs() { return rs_; }
   void rs(gsl_rng* rs) { rs_ = rs; }
   double D() { return D_; }
@@ -77,6 +80,7 @@ protected:
   string savefilename_;
   string walkerType_;
   string surfaceShape_;
+  string infoString_;
 
   gsl_rng* rs_;
 

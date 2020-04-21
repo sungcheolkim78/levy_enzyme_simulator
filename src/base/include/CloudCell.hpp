@@ -178,8 +178,9 @@ void CloudCell::info(Log* log_) {
 
   // features on save file
   string log_msg = to_string(age)+" "+
-                   to_string(concentration())+" "+
-                   to_string(substrateCloudPtr_->concentration())+" "+
+                   to_string(focusConc_)+" "+
+                   to_string((*this)[0]->r())+" "+
+                   to_string(substrateCloudPtr_->cellConcentration())+" "+
                    to_string(hitSubstrate())+" "+
                    to_string(productConcentration_.back())+" "+
                    to_string(rate)+" "+
@@ -187,7 +188,8 @@ void CloudCell::info(Log* log_) {
                    to_string(wpressure)+" "+
                    to_string(meanFreeTime)+" "+
                    to_string(meanFreeLength)+" "+
-                   to_string(freeLengthArray_.size());
+                   to_string(freeLengthArray_.size())+" "+
+                   infoString();
   log_->write(log_msg);
 
   // write concentration infomation

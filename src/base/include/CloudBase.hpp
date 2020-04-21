@@ -44,12 +44,14 @@ public:
 
     cloudID(cID);
     string tmp = pr.simfilename();
-    if(tmp.find(".par") != string::npos)
-      savefilename(tmp.substr(0, tmp.find(".par")) + "_" + cID + ".pt");
-    else if(tmp.find(".txt") != string::npos)
-      savefilename(tmp.substr(0, tmp.find(".txt")) + "_" + cID + ".pt");
+    if (tmp.find(".par") != string::npos) 
+      infoString(tmp.substr(0, tmp.find(".par")));
+    else if (tmp.find(".txt") != string::npos) 
+      infoString(tmp.substr(0, tmp.find(".txt")));
     else 
-      savefilename(tmp + "_" + cID + ".pt");
+      infoString(tmp);
+
+    savefilename(infoString() + "_" + cID + ".pt");
     alpha(pr.doubleRead(cID+" Alpha", "2.0"));
     surfaceShape(pr.stringRead(cID+" Surface Shape", "Sphere"));
     walkerType(pr.stringRead(cID+" Walker Type", "Base"));
@@ -68,6 +70,8 @@ public:
   // inline functions
   inline double concentration() { return concentration_; }
   inline void concentration(double c) { concentration_ = c; }
+  inline double cellConcentration() { return cellConcentration_; }
+  inline void cellConcentration(double c) { cellConcentration_ = c; }
   inline double r() { return r_; }
   inline void r(double radius) { r_ = radius; }
   inline double temperature() { return temperature_; }
@@ -80,6 +84,7 @@ public:
 protected:
   // particle related information
   double concentration_;
+  double cellConcentration_;
   double viscosity_;
   double temperature_;
   double r_;
@@ -128,11 +133,13 @@ void CloudBase::injectWalkers(ParameterReader& pr) {
     initialCount_ = pr.intRead(cloudID_+" Particle Number", "1");
 
     concentration((double)initialCount_/(sf_->typeVolume()*GSL_CONST_NUM_AVOGADRO*1e-21));
+    cellConcentration((double)initialCount_/(sf_->volume()*GSL_CONST_NUM_AVOGADRO*1e-21));
     cout << "... cal Local Concentration: " << gre << concentration() << def << " [uM]" << endl;
+    cout << "... cal Cell Concentration: " << gre << cellConcentration() << def << " [uM]" << endl;
   } else if (pr.checkName(cloudID_+" Concentration")) {
-    double cell_concentration = pr.doubleRead(cloudID_+" Concentration", "1.0");
+    cellConcentration(pr.doubleRead(cloudID_+" Concentration", "1.0"));
 
-    initialCount_ = (int)(cell_concentration*sf_->volume()*GSL_CONST_NUM_AVOGADRO*1e-21);
+    initialCount_ = (int)(cellConcentration()*sf_->volume()*GSL_CONST_NUM_AVOGADRO*1e-21);
     cout << "... cal Particle Number: " << gre << initialCount_ << def << endl;
     concentration((double)initialCount_/(sf_->typeVolume()*GSL_CONST_NUM_AVOGADRO*1e-21));
     cout << "... cal Local Concentration: " << gre << concentration() << def << " [uM]" << endl;
@@ -140,7 +147,9 @@ void CloudBase::injectWalkers(ParameterReader& pr) {
     initialCount_ = pr.intRead(cloudID_+" Particle Number", "100");
 
     concentration((double)initialCount_/(sf_->typeVolume()*GSL_CONST_NUM_AVOGADRO*1e-21));
+    cellConcentration((double)initialCount_/(sf_->volume()*GSL_CONST_NUM_AVOGADRO*1e-21));
     cout << "... cal Local Concentration: " << gre << concentration() << def << " [uM]" << endl;
+    cout << "... cal Cell Concentration: " << gre << cellConcentration() << def << " [uM]" << endl;
   }
 
   cout << "... inject " << gre << initialCount_ << def << " (" << walkerType() << " Type) Walker in Cloud(" << cloudID() << ")" << endl;
