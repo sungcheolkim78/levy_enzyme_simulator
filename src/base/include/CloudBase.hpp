@@ -40,7 +40,7 @@ public:
   CloudBase(ParameterReader& pr, string cID) :
     viscosity_(0.001),
     temperature_(300.0) {
-    cout <<"[Cloud(" << cID << ")] is initialized." << endl;
+    cout << blu << "[Cloud(" << cID << ")] is initialized." << def << endl;
 
     cloudID(cID);
     string tmp = pr.simfilename();
@@ -110,7 +110,7 @@ void CloudBase::setProperties(ParameterReader& pr) {
     temperature_ = pr.doubleRead(cloudID()+" Temperature", "300");
     r_ = pr.doubleRead(cloudID()+" Particle Radius", "1")/1000.0;
     D_ = GSL_CONST_MKSA_BOLTZMANN*temperature_*1e18/(6.0*M_PI*viscosity_*r_);   // [um^2/s]
-    cout << "... D: " << D_ << " [um2/s]" << endl;
+    cout << "... cal D: " << gre << D_ << def << " [um2/s]" << endl;
   }
 }
 
@@ -128,22 +128,22 @@ void CloudBase::injectWalkers(ParameterReader& pr) {
     initialCount_ = pr.intRead(cloudID_+" Particle Number", "1");
 
     concentration((double)initialCount_/(sf_->typeVolume()*GSL_CONST_NUM_AVOGADRO*1e-21));
-    cout << "... concentration: " << concentration() << " [uM]" << endl;
+    cout << "... cal Local Concentration: " << gre << concentration() << def << " [uM]" << endl;
   } else if (pr.checkName(cloudID_+" Concentration")) {
     double cell_concentration = pr.doubleRead(cloudID_+" Concentration", "1.0");
 
     initialCount_ = (int)(cell_concentration*sf_->volume()*GSL_CONST_NUM_AVOGADRO*1e-21);
-    cout << "... particle number: " << initialCount_ << endl;
+    cout << "... cal Particle Number: " << gre << initialCount_ << def << endl;
     concentration((double)initialCount_/(sf_->typeVolume()*GSL_CONST_NUM_AVOGADRO*1e-21));
-    cout << "... local concentration: " << concentration() << " [uM]" << endl;
+    cout << "... cal Local Concentration: " << gre << concentration() << def << " [uM]" << endl;
   } else {
     initialCount_ = pr.intRead(cloudID_+" Particle Number", "100");
 
     concentration((double)initialCount_/(sf_->typeVolume()*GSL_CONST_NUM_AVOGADRO*1e-21));
-    cout << "... concentration: " << concentration() << " [uM]" << endl;
+    cout << "... cal Local Concentration: " << gre << concentration() << def << " [uM]" << endl;
   }
 
-  cout << "... inject " << initialCount_ << " (" << walkerType() << " Type) Walker in Cloud(" << cloudID() << ")" << endl;
+  cout << "... inject " << gre << initialCount_ << def << " (" << walkerType() << " Type) Walker in Cloud(" << cloudID() << ")" << endl;
 
   // calculate initial position
   string res = pr.stringRead(cloudID_+" Injection Method", "Random");

@@ -38,7 +38,7 @@ class Simulator {
       internalItr_(1),
       cloudCount_(0) 
     {
-      cout << "[Simulator] is initialized." << endl;
+      cout << blu << "[Simulator] is initialized." << def << endl;
       dt_ = pr.doubleRead("dt", "0.0001");
       iteration_ = pr.intRead("iteration", "1000");
       cloudNames_ = pr.arrayRead("species Name", "(Enzyme, Substrate)");
@@ -108,7 +108,7 @@ class Simulator {
 void Simulator::run() {
   high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
-  cout << "... total simulation time : " << dt_*iteration_ << " [s]" << endl;
+  cout << "... cal Total Simulation Time : " << dt_*iteration_ << " [s]" << endl;
   ProgressBar *bar = new ProgressBar(iteration_);
   size_t infoItr;
   string msg = "";
@@ -127,29 +127,28 @@ void Simulator::run() {
 
       if(showProg_ && (infoItr%infoCycle_) == 0) {
           high_resolution_clock::time_point t2 = high_resolution_clock::now();
+          int sep = 60;
           auto runningSec = duration_cast<seconds>(t2 - t1).count();
-          cout << "[#] = " << infoItr << " " << string(60,'-') << " " << runningSec << " [sec] " << endl;
+          if (infoItr == 0) { sep = 62; } 
+          cout << blu << "[#] = " << infoItr << " " << string(sep,'-') << " " << runningSec << " [sec] " << def << endl;
           info();
       }
 
       bar->Progressed(infoItr);
   }
 
-  // print info for the last iteration
-  cout << "[#] = " << iteration_ << " " << string(65,'-') << endl;
-  info();
-
-  // print running time
+  // print info for the last iteration nd running time
   high_resolution_clock::time_point t2 = high_resolution_clock::now();
   auto runningSec = duration_cast<seconds>(t2 - t1).count();
   auto runningMin = duration_cast<minutes>(t2 - t1).count();
-  cout << "... total running time: " << runningMin << " [mins] " << runningSec - 60*runningMin << " [secs]" << endl;
+  cout << blu << "[#] = " << iteration_ << " " << string(35,'-') << " running time: " << runningMin << " [mins] " << runningSec - 60*runningMin << " [secs]" << def << endl;
+  info();
 }
 
 void Simulator::injectClouds(ParameterReader& pr) {
   // inject clouds
   for (auto cname : cloudNames_) {
-    cout << "... add " << cname << endl;
+    cout << gre << "... add " << cname << def << endl;
     CloudCell* c = new CloudCell{pr, cname};
     c->rs(rs_);
     c->dt(dt_);

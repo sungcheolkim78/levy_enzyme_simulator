@@ -48,6 +48,8 @@ bool ParameterReader::checkName(string name, string selector) {
 string ParameterReader::stringRead(string name, string defvalue, bool verbose, string selector) {
     string line;
     string result;
+    string red = "\033[0;31m";
+    string def = "\033[0m";
 
     for (size_t i=0; i<lines_.size(); i++) {
       // check comment lines
@@ -64,7 +66,7 @@ string ParameterReader::stringRead(string name, string defvalue, bool verbose, s
           // print items if it appear first time
           if (printbuffer_.find(name) == string::npos) {
             if (verbose)
-              cout << "... set " << name << " " << selector << " " << result << endl;
+              cout << "... set " << name << " " << selector << " " << red << result << def << endl;
             printbuffer_.append("/"+name);
           }
           // delete empty spaces
@@ -107,6 +109,8 @@ bool ParameterReader::boolRead(string name, string defvalue, bool verbose, strin
 vector<string> ParameterReader::arrayRead(string name, string defvalue, bool verbose, string selector) {
   string res = stringRead(name, defvalue, false, selector);
   vector<string> result;
+  string red = "\033[0;31m";
+  string def = "\033[0m";
 
   size_t findidx = res.find("(");
   if (findidx == string::npos) { cerr << "... [Err] array format: (item1, item2, item3)" << endl; exit(1); }
@@ -132,9 +136,9 @@ vector<string> ParameterReader::arrayRead(string name, string defvalue, bool ver
   } while (loop_flag);
 
   if (verbose) {
-    cout << "... set " << name << "(" << result.size() << ") " << selector << " ";
+    cout << "... set " << name << "(" << result.size() << ") " << selector << " " << red;
     for (auto s : result) cout << s << ", ";
-    cout << '\b' << " " << endl;
+    cout << '\b' << " " << def << endl;
   }
 
   return result;

@@ -31,7 +31,7 @@ public:
     cloudID(cID);
     surfaceID("Box Surfaces");
     surfaceType("vol");
-    cout << "[" << surfaceID() << "(" << cloudID() << ")] is initialized." << endl;
+    cout << blu << "[" << surfaceID() << "(" << cloudID() << ")] is initialized." << def << endl;
 
     Vec3<double> v = pr.vec3Read(cloudID_+" Box Dimensions", "(1, 1, 1)");
     width_ = v.X();
@@ -40,7 +40,8 @@ public:
     volume(width_*length_*depth_);
     typeVolume(width_*length_*depth_);
     surfaceArea(2.0*(width_*length_+length_*depth_+depth_*width_));
-    cout << "... total volume: " << volume() << " [um3]" << endl;
+    cout << "... cal Total Volume: " << gre << volume() << def << " [um3]" << endl;
+    cout << "... cal Surface Area: " << gre << surfaceArea() << def << " [um2]" << endl;
 
     pr_ = pr.doubleRead(cloudID_+" Particle Radius", "1")/1000.0;
   };

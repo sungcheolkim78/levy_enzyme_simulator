@@ -28,7 +28,7 @@ class ParameterReader {
   ParameterReader(string filename) {
     simfilename_ = filename;
 
-    cout << "[ParameterReader] is initialized." << endl;
+    cout << "\033[0;34m[ParameterReader] is initialized.\033[0m" << endl;
     cout << "... parameter file : " << simfilename_ << endl;
 
     printbuffer_ = "...";

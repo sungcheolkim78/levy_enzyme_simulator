@@ -39,7 +39,7 @@ public:
     reactionOn_(false),
     writeCount_(false)
   {
-    cout << "[Cell Cloud (" << cloudID << ")] is initialized" << endl;
+    cout << blu << "[Cell Cloud (" << cloudID << ")] is initialized" << def << endl;
 
     substrateOn_ = pr.boolRead(cloudID + " Substrate On", "True");
 
@@ -113,25 +113,25 @@ void CloudCell::setSubstrateCloud(Cloud* sc) {
 
   // calculate key parameters
   double csa = M_PI*sightDistance()*sightDistance();
-  cout << "... cross section area: " << csa << " [um2]" << endl;
+  cout << "... cal Reaction Cross-section Area: " << gre << csa << def << " [um2]" << endl;
   double mfp = 1.0e21/(GSL_CONST_NUM_AVOGADRO*sc->concentration()*csa);
-  cout << "... calculated mean free path: " << mfp << " [um]" << endl;
+  cout << "... cal Mean Free Path: " << gre << mfp << def << " [um]" << endl;
   meanVel_ = sqrt(GSL_CONST_MKSA_BOLTZMANN*temperature()/(*this)[0]->mass());
-  cout << "... thermal mean velocity: " << meanVel_ << " [um/s]" << endl;
+  cout << "... cal Thermal Mean Velocity: " << gre << meanVel_ << def << " [um/s]" << endl;
   searchTime_ = mfp/meanVel_;
-  cout << "... Diffusion Time: " << searchTime_ << " [s]" << endl;
+  cout << "... cal Mean Diffusion Time: " << gre << searchTime_ << def << " [s]" << endl;
 
   if (reactionOn_) {
     // diffusion case
     if (focusConc_ == 0.0) {
       reactionTime_ = (sc->concentration()+concentration()+Km())/(Kcat()*sc->concentration());
-      cout << "... Reaction Time: " << reactionTime_ << " [s]" << endl;
+      cout << "... cal MM Reaction Time: " << gre << reactionTime_ << def << " [s]" << endl;
       if (reactionTime_ < searchTime_) {
         cout << "... reaction time is less than diffusion time. Adjust sight distance";
         exit(1);
       }
-      cout << "... Residence Time: " << reactionTime_ - searchTime_ << " [s]" << endl;
-      cout << "... MM rate: " << (Kcat()*sc->concentration()*concentration())/(sc->concentration()+concentration()+Km()) << " [uM/s] " << endl;
+      cout << "... cal Residence Time: " << gre << reactionTime_ - searchTime_ << def << " [s]" << endl;
+      cout << "... cal MM rate: " << gre << (Kcat()*sc->concentration()*concentration())/(sc->concentration()+concentration()+Km()) << def << " [uM/s] " << endl;
     }
   } else {
     reactionTime_ = searchTime_;
@@ -153,13 +153,14 @@ void CloudCell::info(Log* log_) {
   // linear slope for mean velocity
   double rate = productConcentration_.back()/age;
   // local slope for instanteous velocity
-  //if (productConcentration_.size() > 101)
-  //  rate = (productConcentration_.back() - productConcentration_[productConcentration_.size()-100])/(100.0*dt());
+  double inst_rate = 0;
+  if (productConcentration_.size() > 201)
+    inst_rate = (productConcentration_.back() - productConcentration_[productConcentration_.size()-200])/(200.0*dt());
 
   cout << "Time: " << age << " [s]" << endl;
   cout << "Total Product: " << hitSubstrate() << endl;
   cout << "Product Concentration: " << productConcentration_.back() << " [uM]" << endl;
-  cout << "Product Rate: " << rate << " [uM/s]" << endl;
+  cout << "Product Rate: " << red << rate << def << " [uM/s] (" << red << inst_rate << def << ") [uM/s]" << endl;
 
   for (auto w : wlist_) { totalWallHit += w->wallHit(); }
   cout << "Wall Hit: " << totalWallHit << endl;
@@ -175,7 +176,10 @@ void CloudCell::info(Log* log_) {
   cout << "Mean Free Time: " << meanFreeTime << " [s] (" << freeTimeArray_.size() << ")" << endl;
   cout << "Mean Free Length: " << meanFreeLength << " [um] (" << freeLengthArray_.size() << ")" << endl;
 
+  // features on save file
   string log_msg = to_string(age)+" "+
+                   to_string(concentration())+" "+
+                   to_string(substrateCloudPtr_->concentration())+" "+
                    to_string(hitSubstrate())+" "+
                    to_string(productConcentration_.back())+" "+
                    to_string(rate)+" "+
@@ -199,6 +203,7 @@ void CloudCell::info(Log* log_) {
 }
 
 void CloudCell::moveWalker(double dt) {
+
   // move walkers for total dt time
   for (auto w : wlist_) {
     // time(age) shift
@@ -217,8 +222,8 @@ void CloudCell::moveWalker(double dt) {
 
       // Case1: enzyme full stay
       if (w->duration() > pt_) {
-        //if (debug_)
-         // cout << "... subcycle[" << subcycleIteration << "] stay - pt_: " << pt_ << " duration_: " << duration_ << endl;
+        if (debug_)
+          cout << red << "... subcycle[" << subcycleIteration << "] stay - pt_: " << pt_ << " duration_: " << w->duration() << def << endl;
         w->subDuration(pt_);
         pt_ = 0.0;
         w->step(Vec3<double>{0.0, 0.0, 0.0});
@@ -227,8 +232,8 @@ void CloudCell::moveWalker(double dt) {
 
       // Case2: enzyme partial stay but start to move within dt
       if ((w->duration() < pt_) and (w->duration() > 0.0)) {
-        //if (debug_)
-        // cout << "... subcycle[" << subcycleIteration << "] partial stay - pt_: " << pt_ << " duration_: " << duration_ << endl;
+        if (debug_)
+          cout << red << "... subcycle[" << subcycleIteration << "] partial stay - pt_: " << pt_ << " duration_: " << w->duration() << def << endl;
         pt_ -= w->duration();
         w->duration(0.0);
         continue;
@@ -251,8 +256,8 @@ void CloudCell::moveWalker(double dt) {
             substrate_number += countSubstrate(w->position(), dr0*tt_w);
             substrate_number += countSubstrate(w->position()+dr0*tt_w, dr - dr0*tt_w);
           }
-          //if (debug_)
-          //  cout << "... subcycle[" << subcycleIteration << "] found wall - pt_: " << pt_*tt_w << endl;
+          if (debug_)
+            cout << red << "... subcycle[" << subcycleIteration << "] found wall - pt_: " << pt_*tt_w << def << endl;
           w->addWallHit(1);
           //substrate_number += countSubstrate(w, dr*tt_w);
         } else {
@@ -261,8 +266,8 @@ void CloudCell::moveWalker(double dt) {
         }
 
         // Case4: freely move
-        //if (debug_)
-        //  cout << "... subcycle[" << subcycleIteration << "] move - pt_: " << pt_ << " duration_: " << duration_ << endl;
+        if (debug_)
+          cout << red << "... subcycle[" << subcycleIteration << "] move - pt_: " << pt_ << " duration_: " << w->duration() << def << endl;
         //  update pid list
         auto p_pid = w->pid();
         w->step(dr);
@@ -280,7 +285,7 @@ void CloudCell::moveWalker(double dt) {
           w->addSubstrateHit(substrate_number);
 
           if (debug_)
-            cout << "... subcycle[" << subcycleIteration << "] (" << w->pid() << ") found " << substrate_number << " substrates at tt_w= " << tt_w << " with duration = " << w->duration() << " [s] " << endl;
+            cout << red << "... subcycle[" << subcycleIteration << "] (" << w->pid() << ") found " << substrate_number << " substrates at tt_w= " << tt_w << " with duration = " << w->duration() << " [s] " << def << endl;
 
           // calculate free time before the reaction
           if (w->lastHitAge() > 0.0) {
@@ -354,10 +359,11 @@ size_t CloudCell::countSubstrate(Vec3<double> p, Vec3<double> dr) {
   if (sublist.size() == 0) return 0;
 
   for(auto subidx : sublist) {
-    if (!substrateConstant_)
+    if (!substrateConstant_) {
       // delete particle
+      if (debug_) cerr << "... remove substrate [" << subidx << "]" << endl;
       substrateCloudPtr_->removeWalker(subidx);
-    else {
+    } else {
       if (focusConc_ == 0.0) {
         // make new active site
         Vec3<double> temp = (substrateCloudPtr_->sf())->calRandomPosition(rs_);
@@ -390,8 +396,8 @@ double CloudCell::getTimeForSubstrate(Vec3<double> p, Vec3<double> dr, double dt
     if ((t>0.0) and (t<=1.0)) {
       if((new_position*t+p*(1.0-t)-aS).mag() <= sightDistance_)
       {
-        //if (debug_)
-        //  cout << "... stop at substrate[" << i << "] (" << (*substrateCloudPtr_)[i]->pid() << ") p=" << p << " t = " << t << endl;
+        if (debug_)
+          cout << "... stop at substrate[" << i << "] (" << (*substrateCloudPtr_)[i]->pid() << ") p=" << p << " t = " << t << endl;
         if (min_t > t) min_t = t;
         if (max_t < t) max_t = t;
       }

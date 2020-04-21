@@ -1,7 +1,7 @@
 # Simulator
 
 dt: 0.0007
-iteration: 500
+iteration: 3000
 species Number: 2
 save Trace: False
 save Cycle: 5

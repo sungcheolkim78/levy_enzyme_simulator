@@ -39,7 +39,7 @@ public:
   void removeWalker(size_t tid);
   unsigned int size() { return wlist_.size(); }
   Walker* operator[](int i) {
-    if (i<0 || size()<=i) throw out_of_range{"Cloud::operator[]"};
+    //if (i<0 || size()<i) throw out_of_range{"Cloud::operator[] - "+to_string(i)+" size: "+to_string(size())};
     return wlist_[i];
   };
 
@@ -103,13 +103,12 @@ void Cloud::addWalker(Walker* w) {
 }
 
 void Cloud::removeWalker(size_t tid) {
-  if (size() <= tid) {
-    cout << "... no walker[" << tid << "] exists." << endl;
-    return;
-  }
+  //if (size() < tid) {
+  //  cout << "... no walker[" << tid << "] exists." << endl;
+  //  return;
+  // }
 
-  using std::swap;
-  swap(wlist_[tid], wlist_.back());
+  std::swap(wlist_[tid], wlist_.back());
   wlist_.pop_back();
 }
 

@@ -33,13 +33,14 @@ public:
     cloudID(cID);
     surfaceID("Sphere Surfaces");
     surfaceType("vol");
-    cout << "[" << surfaceID() << "(" << cloudID() << ")] is initialized." << endl;
+    cout << blu << "[" << surfaceID() << "(" << cloudID() << ")] is initialized." << def << endl;
 
     radius_ = pr.doubleRead(cID+" Sphere Radius", "1");
     volume(4.0/3.0*M_PI*radius_*radius_*radius_);
     typeVolume(4.0/3.0*M_PI*radius_*radius_*radius_);
     surfaceArea(4.0*M_PI*radius_*radius_);
-    cout << "... total volume: " << volume() << " [um3]" << endl;
+    cout << "... cal Total Volume: " << gre << volume() << def << " [um3]" << endl;
+    cout << "... cal Surface Area: " << gre << surfaceArea() << def << " [um2]" << endl;
 
     pr_ = pr.doubleRead(cloudID_+" Particle Radius", "1")/1000.0;
   };

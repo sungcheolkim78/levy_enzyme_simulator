@@ -9,10 +9,16 @@
 
 #include "Vec3.hpp"
 #include "ParameterReader.h"
+#include "colormod.h"
 #include <gsl/gsl_rng.h>
 #include <iomanip>
 
 using namespace std;
+
+Color::Modifier red(Color::FG_RED);
+Color::Modifier gre(Color::FG_GREEN);
+Color::Modifier blu(Color::FG_BLUE);
+Color::Modifier def(Color::FG_DEFAULT);
 
 enum class SurfaceTypeClass { volume, surface, disk, ring };
 
@@ -50,6 +56,8 @@ public:
   void pradius(double r) { pr_ = r; }
   double surfaceArea() { return surfaceArea_; }
   void surfaceArea(double a) { surfaceArea_ = a; }
+  inline bool debug() { return debug_; }
+  inline void debug(bool t) { debug_ = t; }
 
 protected:
   string cloudID_;
@@ -60,6 +68,7 @@ protected:
   double typeVolume_;
   double surfaceArea_;
   double pr_;
+  bool debug_;
 
 private:
 
@@ -72,26 +81,25 @@ double Surfaces::getTimeForSurface(Vec3<double> position, Vec3<double> dr) {
   // condition: p should be inside, p+dr should be outside
 
   if (!isInside(position)) {
-    cerr << "... calculate surface distance from outside p=" << position << endl;
+    if (debug_)
+      cerr << red << "... calculate surface distance from outside p=" << position << def << endl;
     exit(1);
   }
   if (isInside(position+dr)) {
-    //cerr << "... calculate surface distance from too far p=" << position << " dr=" << dr << endl;
+    if (debug_)
+      cerr << red << "... calculate surface distance from too far p=" << position << " dr=" << dr << def << endl;
     return 2.0;
   }
 
-  //cerr << std::setprecision(5) << "... [Wall] p=" << position << " dr= " << dr << endl;
+  if (debug())
+    cerr << gre << std::setprecision(3) << "... [Wall] p=" << position << " dr= " << dr << def << endl;
+
   // binary search for surface distance on dr line
   const size_t order{10};     // precision 1/2^10 = 1/1024 ~ 0.001
   size_t count_p{0}, count_n{0};
   double dp{0.0}, dp_n{0.5}, dp_o{0.0};
   for (size_t i=0; i < order; ++i) {
-    /*
-    cerr << "... [Surface][" << count_p + count_n << "] dp=" << dp
-         << std::setprecision(5) << std::scientific << "(" << dp_n << std::defaultfloat << ") c+="
-         << count_p << " c-=" << count_n << endl;
-    */
-
+    
     dp += dp_n;
 
     dp_n *= 0.5;
@@ -107,7 +115,14 @@ double Surfaces::getTimeForSurface(Vec3<double> position, Vec3<double> dr) {
 
   if (dp_n < 0) {
     dp = dp_o;
-    //cerr << std::setprecision(5) << "... [gTFS] p=" << position << " dr=" << dr << " dp=" << dp << endl;
+    if (debug())
+      cerr << gre << std::setprecision(3) << "... [getTimToSurface] p=" << position << " dr=" << dr << " dp=" << dp << def << endl;
+  } else {
+    if (debug()) {
+      cerr << gre << "... [getTimeToSurface][" << count_p + count_n << "] dp=" << dp
+            << std::setprecision(3) << std::scientific << "(" << dp_n << std::defaultfloat << ") c+="
+            << count_p << " c-=" << count_n << def << endl;
+    }
   }
 
   // find hitting point and stop there
@@ -124,11 +139,25 @@ Vec3<double> Surfaces::calNewStep(Vec3<double> position, Vec3<double> dr, double
 
   // find wall hit position
   Vec3<double> n = calNormal(position + dr*tt);
-  //cerr << "... new step, position: " << position << " normal: " << n << endl;
   if (n.mag() == 0) return dr*tt;
 
-  Vec3<double> vn = (dr - n*(2.0*(1.0-tt)*(dr.dotProduct(n))));
-  if (vn.mag() == 0) return dr*tt;
+  // calculate new step vector
+  Vec3<double> vn = dr - n*(2.0*(1.0-tt)*(dr.dotProduct(n)));
+  if (debug())
+    cerr << red << "... [calNewStep] position: " << position << " normal: " << n << " step: " << vn << def << endl;
+
+  // almost hit wall
+  if (vn.mag() == 0) {
+    if (debug_)
+      cerr << red << "... [calNewStep] no new step - position: " << position << def << endl;
+    return dr*tt;
+  }
+  // hit wall from other wall position
+  if (dr.dotProduct(n) < 0.0000001) {
+    if (debug_)
+      cerr << red << "... [calNewStep] dr perpendicular to n - dr: " << dr << " n: " << n << def << endl;
+    return dr*tt;
+  }
 
   // check inside
   if (isInside(position + vn)) {
@@ -136,9 +165,11 @@ Vec3<double> Surfaces::calNewStep(Vec3<double> position, Vec3<double> dr, double
   } else {
     // if new step is outside, recurive call 
     tt = getTimeForSurface(position, vn);
-    //cerr << std::setprecision(6);
-    //cerr << "... recursive call: " << position << " old step: " << dr << " normal: " << n << endl;
-    //cerr << " new step: " << vn << "  tt: " << tt << endl;
+    if (debug()) {
+      cerr << red << std::setprecision(3);
+      cerr << "... [calNewStep] outside - recursive call - collision angle :" << dr.dotProduct(n)/dr.mag() << endl;
+      cerr << "... [calNewStep] new step: " << vn << "  tt: " << tt << def << endl;
+    }
     return calNewStep(position, vn, tt);
   }
 }

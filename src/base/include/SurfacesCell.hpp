@@ -47,15 +47,16 @@ public:
   SurfacesCell(ParameterReader& pr, string cID): length_(0), radius_(0), bandPosition_(0), bandWidth_(0), ringDepth_(0) {
     cloudID(cID);
     surfaceID("Bacteria Surfaces");
-    cout << "[" << surfaceID() << "(" << cloudID() << ")] is initialized." << endl;
+    cout << blu << "[" << surfaceID() << "(" << cloudID() << ")] is initialized." << def << endl;
 
     length_ = pr.doubleRead(cID+" Cell Length", "6");
     radius_ = pr.doubleRead(cID+" Cell Radius", "1");
+    debug(pr.boolRead(cID+" Debug", "False"));
 
     pradius(pr.doubleRead(cloudID_+" Particle Radius", "1")/1000.0);
 
     volume_ = 4.0/3.0*M_PI*radius_*radius_*radius_ + radius_*radius_*M_PI*length_;
-    cout << "... total volume: " << volume_ << " [um3]" << endl;
+    cout << "... cal Total Volume: " << gre << volume_ << def << " [um3]" << endl;
 
     // get band information for ring, disk, surface cases
     surfaceType(pr.stringRead(cID+" Surface Type", "Cell"));
@@ -95,8 +96,8 @@ public:
       typeVolume(4.0/3.0*M_PI*radius_*radius_*radius_ + radius_*radius_*M_PI*length_);
       surfaceArea(4.0*M_PI*radius_*radius_+2.0*M_PI*radius_*length_);
     }
-    cout << "... type volume: " << typeVolume() << " [um3]" << endl;
-    cout << "... total surface area: " << surfaceArea() << " [um2]" << endl;
+    cout << "... cal Cloud Volume: " << gre << typeVolume() << def << " [um3]" << endl;
+    cout << "... cal Cloud Surface Area: " << gre << surfaceArea() << def << " [um2]" << endl;
   }
   virtual ~SurfacesCell() {};
 

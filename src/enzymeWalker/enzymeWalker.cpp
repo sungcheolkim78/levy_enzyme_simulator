@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
   // prepare parameter file
 
   string parname {"test.par"};
-  cout << "[enzymeWalker] Cell Simulator, made by Sung-Cheol Kim, version 1.6.0" << endl;
+  cout << blu << "[enzymeWalker] Cell Simulator, made by Sung-Cheol Kim, version 1.6.0" << def << endl;
 
   if (argc == 2)
     parname = argv[1];
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   s.injectClouds(pr);
 
   // iterates for time steps
-  cout << "[CellSimulator] start simulation" << endl;
+  cout << blu << "[CellSimulator] start simulation" << def << endl;
   s.run();
 }
 
