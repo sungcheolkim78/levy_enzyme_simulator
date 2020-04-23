@@ -120,7 +120,7 @@ double Surfaces::getTimeForSurface(Vec3<double> position, Vec3<double> dr) {
   } else {
     if (debug()) {
       cerr << gre << "... [getTimeToSurface][" << count_p + count_n << "] dp=" << dp
-            << std::setprecision(3) << std::scientific << "(" << dp_n << std::defaultfloat << ") c+="
+            << std::setprecision(3) << "(" << dp_n << std::setprecision(6) << ") c+="
             << count_p << " c-=" << count_n << def << endl;
     }
   }
