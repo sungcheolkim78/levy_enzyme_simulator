@@ -131,7 +131,9 @@ void CloudCell::setSubstrateCloud(Cloud* sc) {
         exit(1);
       }
       cout << "... cal Residence Time: " << gre << reactionTime_ - searchTime_ << def << " [s]" << endl;
-      cout << "... cal MM rate: " << gre << (Kcat()*sc->concentration()*concentration())/(sc->concentration()+concentration()+Km()) << def << " [uM/s] " << endl;
+      cout << "... cal MM rate: " << gre << (Kcat()*sc->cellConcentration()*cellConcentration())/(sc->cellConcentration()+cellConcentration()+Km()) << def << " [uM/s] " << endl;
+    } else {
+      cout << "... cal MM rate: " << gre << (Kcat()*sc->cellConcentration()*focusConc_)/(sc->cellConcentration()+focusConc_+Km()) << def << " [uM/s] " << endl;
     }
   } else {
     reactionTime_ = searchTime_;
@@ -253,7 +255,7 @@ void CloudCell::moveWalker(double dt) {
         if ((tt_w < 1.0) and (tt_w >= 0.0)) {
           // substrate collision count with wall hit
           Vec3<double> dr0 = dr;
-          dr = sf_->calNewStep(w->position(), dr, tt_w);
+          dr = sf_->calNewStep(w->position(), dr, tt_w, 0);
           if (substrateOn_) {
             substrate_number += countSubstrate(w->position(), dr0*tt_w);
             substrate_number += countSubstrate(w->position()+dr0*tt_w, dr - dr0*tt_w);
@@ -396,8 +398,7 @@ double CloudCell::getTimeForSubstrate(Vec3<double> p, Vec3<double> dr, double dt
     // find collision condition for trajectory
     double t = Vec3<double>::dotProduct(new_position-aS, dr)/dr.mag2();
     if ((t>0.0) and (t<=1.0)) {
-      if((new_position*t+p*(1.0-t)-aS).mag() <= sightDistance_)
-      {
+      if((new_position*t+p*(1.0-t)-aS).mag() <= sightDistance_) {
         if (debug_)
           cout << "... stop at substrate[" << i << "] (" << (*substrateCloudPtr_)[i]->pid() << ") p=" << p << " t = " << t << endl;
         if (min_t > t) min_t = t;

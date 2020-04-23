@@ -37,7 +37,7 @@ public:
   // member functions
   double getTimeForSurface(Vec3<double> position, Vec3<double> dr);
   inline bool isInside(Vec3<double> p) { return isInside(p.X(), p.Y(), p.Z()); }
-  Vec3<double> calNewStep(Vec3<double> position, Vec3<double> dr, double tt);
+  Vec3<double> calNewStep(Vec3<double> position, Vec3<double> dr, double tt, int count);
 
   // inline functions
   string cloudID() { return cloudID_; }
@@ -91,8 +91,8 @@ double Surfaces::getTimeForSurface(Vec3<double> position, Vec3<double> dr) {
     return 2.0;
   }
 
-  if (debug())
-    cerr << gre << std::setprecision(3) << "... [Wall] p=" << position << " dr= " << dr << def << endl;
+  //if (debug())
+  //  cerr << gre << std::setprecision(3) << "... [Wall] p=" << position << " dr= " << dr << def << endl;
 
   // binary search for surface distance on dr line
   const size_t order{10};     // precision 1/2^10 = 1/1024 ~ 0.001
@@ -133,9 +133,12 @@ double Surfaces::getTimeForSurface(Vec3<double> position, Vec3<double> dr) {
   return dp;
 }
 
-Vec3<double> Surfaces::calNewStep(Vec3<double> position, Vec3<double> dr, double tt) {
+Vec3<double> Surfaces::calNewStep(Vec3<double> position, Vec3<double> dr, double tt, int count=0) {
   // check it is still inside
-  if (isInside(position + dr)) return dr;
+  if (isInside(position + dr)) {
+    count = 0;
+    return dr;
+  }
 
   // find wall hit position
   Vec3<double> n = calNormal(position + dr*tt);
@@ -143,8 +146,8 @@ Vec3<double> Surfaces::calNewStep(Vec3<double> position, Vec3<double> dr, double
 
   // calculate new step vector
   Vec3<double> vn = dr - n*(2.0*(1.0-tt)*(dr.dotProduct(n)));
-  if (debug())
-    cerr << red << "... [calNewStep] position: " << position << " normal: " << n << " step: " << vn << def << endl;
+  //if (debug())
+  //  cerr << red << "... [calNewStep] position: " << position << " normal: " << n << " step: " << vn << def << endl;
 
   // almost hit wall
   if (vn.mag() == 0) {
@@ -154,23 +157,31 @@ Vec3<double> Surfaces::calNewStep(Vec3<double> position, Vec3<double> dr, double
   }
   // hit wall from other wall position
   if (dr.dotProduct(n) < 0.0000001) {
+    vn = dr*tt + n*((1.0-tt)*dr.mag());
     if (debug_)
       cerr << red << "... [calNewStep] dr perpendicular to n - dr: " << dr << " n: " << n << def << endl;
-    return dr*tt;
   }
 
   // check inside
   if (isInside(position + vn)) {
+    count = 0;
     return vn;
   } else {
     // if new step is outside, recurive call 
+    // 20200422 - this recursive algorithm does not match with MM rate 
     tt = getTimeForSurface(position, vn);
-    if (debug()) {
-      cerr << red << std::setprecision(3);
-      cerr << "... [calNewStep] outside - recursive call - collision angle :" << dr.dotProduct(n)/dr.mag() << endl;
-      cerr << "... [calNewStep] new step: " << vn << "  tt: " << tt << def << endl;
-    }
-    return calNewStep(position, vn, tt);
+    //if (debug()) {
+    //  cerr << red << std::setprecision(3);
+    //  cerr << "... [calNewStep] outside - recursive call - collision angle :" << dr.dotProduct(n)/dr.mag() << endl;
+    //  cerr << "... [calNewStep] new step: " << vn << "  tt: " << tt << def << endl;
+    // }
+    // limit recursive call upto 3 times
+    count++;
+    if (count > 2) return vn*tt;
+    else return calNewStep(position, vn, tt, count);
+    // or hit wall and stay until new direction is inside cell
+    //count = 0;
+    //return dr*tt;
   }
 }
 

@@ -109,13 +109,13 @@ void CloudBase::setProperties(ParameterReader& pr) {
   }
 
   if (pr.checkName(cloudID()+" Diffusion Constant")) {
-    D_ = pr.doubleRead(cloudID()+" Diffusion Constant", "1.0");
+    D(pr.doubleRead(cloudID()+" Diffusion Constant", "1.0"));
   } else {
     viscosity_ = pr.doubleRead(cloudID()+" Viscosity", "0.001");
     temperature_ = pr.doubleRead(cloudID()+" Temperature", "300");
     r_ = pr.doubleRead(cloudID()+" Particle Radius", "1")/1000.0;
-    D_ = GSL_CONST_MKSA_BOLTZMANN*temperature_*1e18/(6.0*M_PI*viscosity_*r_);   // [um^2/s]
-    cout << "... cal D: " << gre << D_ << def << " [um2/s]" << endl;
+    D(GSL_CONST_MKSA_BOLTZMANN*temperature_*1e18/(6.0*M_PI*viscosity_*r_));   // [um^2/s]
+    cout << "... cal D: " << gre << D() << def << " [um2/s]" << endl;
   }
 }
 
@@ -224,7 +224,7 @@ void CloudBase::moveWalker(double dt) {
     // check wall hit
     if (!sf_->isInside(w->position()+dr)) {
       double tt = sf_->getTimeForSurface(w->position(), dr);
-      dr = sf_->calNewStep(w->position(), dr, tt);
+      dr = sf_->calNewStep(w->position(), dr, tt, 0);
       w->addWallHit(1);
       //cout << "... hit wall at " << wlist_[i].position()+dr << endl;
     }
